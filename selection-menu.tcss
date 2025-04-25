@@ -1,8 +1,18 @@
 #selection-menu{
   align-horizontal: center;
   align-vertical: middle;
-  width: auto;
 }
+
+CodeView{
+width: 100%;
+text-align: center;
+}
+
+#selection-menu-outer{
+  align: center middle;
+  width: 75%;
+}
+
 #selection-label{
   text-align: center;
   margin: 2;

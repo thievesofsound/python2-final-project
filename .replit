@@ -1,0 +1,13 @@
+entrypoint = "init.py"
+modules = ["python-3.11", "python-3.12"]
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "py"]
+
+[[ports]]
+localPort = 8000
+externalPort = 80
+exposeLocalhost = true
