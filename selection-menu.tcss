@@ -1,0 +1,29 @@
+#selection-menu{
+  align-horizontal: center;
+  align-vertical: middle;
+  width: auto;
+}
+#selection-label{
+  text-align: center;
+  margin: 2;
+}
+
+Button{
+  width: 100%;
+}
+
+Screen{
+  align: center middle;
+}
+
+#egypt{
+ background: #C09300;
+}
+
+#belarus{
+ background: #D22730
+}
+
+#direct{
+ background: #00ABC2;
+}
