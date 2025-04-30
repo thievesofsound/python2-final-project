@@ -1,6 +1,11 @@
-import os
 import random
-
+from enum import Enum
+from rich.panel import Panel
+from rich.console import Console, Group
+from rich import print as Print
+from rich.prompt import Prompt
+from rich.text import Text
+from rich.align import Align
 class Option:
 
   def __init__(self, action, description):
@@ -16,11 +21,11 @@ class Option:
 
 class Input:
 
-  def __init__(self, validate_input, prompt):
+  def __init__(self, validate_input, prompt, text_prompt=""):
     self.validate_input = validate_input
     self.prompt = prompt
     self.value = None
-
+    self.text_prompt = text_prompt
   def display_prompt(self):
     # os.system('clear')
     print(self.prompt, end="")
@@ -29,7 +34,7 @@ class Input:
     while True:
       try:
         self.display_prompt()
-        self.value = input()
+        self.value = input(self.text_prompt)
         if not self.validate_input(self.value):
           raise ValueError("not eligible")
       except ValueError:
@@ -39,7 +44,6 @@ class Input:
 
 
 class OptionPicker(Input):
-
   def __init__(self, options, question, prompt="Please choose an option: "):
     self.options = dict(enumerate(options, 1))
     self.question = question
@@ -47,15 +51,17 @@ class OptionPicker(Input):
                      prompt)
 
   def get_options(self):
+    x = ""
     for index, option in self.options.items():
-      print(f"{index}. {option}")
-
+      x += f"{index}. {option}\n"
+    return Text(x, justify="left")
   def display_prompt(self):
     # os.system('clear')
-    print(self.question)
-    self.get_options()
-    print(self.prompt, end=" ")
-
+    panel_group = Group(
+      Panel(Text(self.question, justify="center"), width=),
+      Panel(self.get_options(), title="Options")
+    )
+    Print(Align.center(Panel(Text("Hello World")).fit(panel_group)))
   def get_option(self):
     return self.options[int(self.get_input())]
 
@@ -102,6 +108,7 @@ class Story:
     self.path = path
     self.current_state = self.path[0]
     self.current_checkpoint = self.path[0]
+    self.next = Enum("state_change",[('FORWARD', lambda: self.path[self.path.index(self.current_state) + 1]), ('CHECKPOINT', lambda: self.current_checkpoint)])
   def game_state(self):
     while True:
       match self.current_state:
@@ -109,7 +116,7 @@ class Story:
           self.current_state.action()
           self.current_state = self.path[1]
         case OptionPicker():
-          self.current_state = self.current_state.get_option().action(self.path[self.path.index(self.current_state) + 1], self.current_checkpoint)
+          self.current_state.get_option().action(self.next)
         case Checkpoint():
           self.current_checkpoint = self.current_state
           self.current_state = self.current_state.action(self.path[self.path.index(self.current_state) + 1], self.current_checkpoint)
@@ -117,21 +124,22 @@ class Story:
           self.current_state.action()
           break
 
-def option_one(next_option, revert):
+def option_one(state_enum):
   print("Option 1")
-  return next_option
+  return state_enum.FORWARD 
 
-def option_two(next_option, revert):
+def option_two(state_enum):
   print("Option 2")
-  return revert
+  return state_enum.CHECKPOINT 
 
 story_checker = Story(
   [
   Start("Start", "This is the start of the game", 123),
-  OptionPicker([Option(option_one, "Option 1"), Option(option_two, "Option 2")], "What do you want to do?"),
+  OptionPicker([Option(option_one, "Try to sneak around surrounding officers on the block to walk to the train."), Option(option_two, "Create a diversion outside.")], """It is 6:32 AM. Walking to a train station will take 2 hours on foot and the last train to the US before hell breaks loose is 9:00AM. People are scrambling to escape, but rush hour is at 7:30AM. You can make time. What do you do?"""),
   Checkpoint("Checkpoint 1", "This is a checkpoint", lambda:print("minigame")),
   OptionPicker([Option(option_one, "Option 1"), Option(option_two, "Option 2")], "What do you want to do?"),
   End("End","This is the end of the game")
   ]
 )
+
 story_checker.game_state()
