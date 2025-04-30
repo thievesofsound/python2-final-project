@@ -1,4 +1,4 @@
-entrypoint = "init.py"
+entrypoint = "modules_new.py"
 modules = ["python-3.11", "python-3.12"]
 
 [nix]

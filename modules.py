@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, auto
 ## Templates
 class Player:
     """Stores health attributes, and tiredness attributes. And the location in the story, when ending"""
@@ -28,19 +28,19 @@ class Choice:
         self.options = options
         self.input_function = Input(lambda x: x in [options.keys()])
     def run(self, state_continue, state_revert):
-        self.input_value = self.input_function.get_input()
-        value = options[self.input_value].action()
-        match continue:
-            case CONTINUE:
+        self.input_value = self.input_function.get_input(self.description)
+        value = self.options[self.input_value].action()
+        match value:
+            case continuer.CONTINUE:
                 return state_continue
-            case REVERT:
+            case continuer.REVERT:
                 return state_revert
 
 class Option:
     def __init__(self, description, action, continuer):
         self.description = description
         self.action = action
-        self.continue = continuer
+        self.continuer = continuer
     def action(self):
         self.action()
         return continuer
@@ -58,8 +58,6 @@ class Input:
             else:
                 return self.value()
 
-class Checkpoint:
-    pass
 
 class Start:
     pass
