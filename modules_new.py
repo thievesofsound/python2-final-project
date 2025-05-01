@@ -17,7 +17,6 @@ class Option:
     def __str__(self):
         return self.description
 
-
 # Create the Input classes
 
 class Input:
@@ -63,7 +62,7 @@ class OptionPicker(Input):
             Panel(self.get_options(), title="Options"),
         )
         with Live(panel_group, refresh_per_second=10, screen=True):
-            time.sleep(1)
+            
         Print(Align.center(Panel(Text("Hello World")).fit(panel_group)))
 
     def get_option(self):
@@ -94,7 +93,7 @@ class Start:
         self.description = description
         self.seed = seed
 
-    def action(self):
+    def action(self, state_enum):
         # print a message to the user
         print("Welcome to the game!")
         # set the seed of the game
@@ -113,17 +112,15 @@ class End:
         # end the game
 
 
+class game_continue extends Enum:
+    FORWARD = 1
+    CHECKPOINT = 2
 class Story:
     def __init__(self, path):
         self.path = path
         self.current_state = self.path[0]
         self.current_checkpoint = self.path[0]
-        self.next = Enum(
-            "state_change",
-            [
-                ("FORWARD", lambda: self.path[self.path.index(self.current_state) + 1]),
-                ("CHECKPOINT", lambda: self.current_checkpoint),
-            ],
+        self.next = game_continue
         )
 
     def game_state(self):
@@ -133,7 +130,14 @@ class Story:
                     self.current_state.action()
                     self.current_state = self.path[1]
                 case OptionPicker():
-                    self.current_state.get_option().action(self.next)
+                    action_start = self.current_state.get_option().action(self.next)
+                    match action_start:
+                        case game_continue.FORWARD:
+                            self.current_state = self.path[
+                                self.path.index(self.current_state) + 1
+                            ]
+                        case game_continue.CHECKPOINT:
+                            self.current_state = self.current_checkpoint
                 case Checkpoint():
                     self.current_checkpoint = self.current_state
                     self.current_state = self.current_state.action(
@@ -145,15 +149,13 @@ class Story:
                     break
 
 
-def option_one(state_enum):
-    print("Option 1")
+def reverse(function, state_enum):
     return state_enum.FORWARD
 
 
-def option_two(state_enum):
+def forward(function, state_enum):
     print("Option 2")
     return state_enum.CHECKPOINT
-
 
 story_checker = Story(
     [
@@ -161,7 +163,7 @@ story_checker = Story(
         OptionPicker(
             [
                 Option(
-                    option_one,
+                    reverse(),
                     "Try to sneak around surrounding officers on the block to walk to the train.",
                 ),
                 Option(option_two, "Create a diversion outside."),
