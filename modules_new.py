@@ -10,7 +10,7 @@ from rich.live import Live
 import time
 class Option:
 
-    def __init__(self, action, description):
+    def __init__(self, action, description, enum_type):
         self.action = action
         self.description = description
 
@@ -43,7 +43,7 @@ class Input:
                 return self.value
 
 class OptionPicker(Input):
-    def __init__(self, options, question, prompt="Please choose an option: "):
+    def __init__(self, options, question, prompt="Here are your options: "):
         self.options = dict(enumerate(options, 1))
         self.question = question
         super().__init__(
@@ -54,17 +54,10 @@ class OptionPicker(Input):
         x = ""
         for index, option in self.options.items():
             x += f"{index}. {option}\n"
-        return Text(x, justify="left") 
+        return x 
     def display_prompt(self):
-        # os.system('clear')
-        panel_group = Group(
-            Panel(Text(self.question, justify="center"), width=self.width),
-            Panel(self.get_options(), title="Options"),
-        )
-        with Live(panel_group, refresh_per_second=10, screen=True):
-            
-        Print(Align.center(Panel(Text("Hello World")).fit(panel_group)))
-
+        format = f"{self.question}\n{self.prompt:}\n" + self.get_options()
+        print(format, end="")
     def get_option(self):
         return self.options[int(self.get_input())]
 
@@ -112,22 +105,22 @@ class End:
         # end the game
 
 
-class game_continue extends Enum:
+class game_continue(Enum):
     FORWARD = 1
     CHECKPOINT = 2
+
 class Story:
     def __init__(self, path):
         self.path = path
         self.current_state = self.path[0]
         self.current_checkpoint = self.path[0]
-        self.next = game_continue
-        )
+        self.next = game_continue 
 
     def game_state(self):
         while True:
             match self.current_state:
                 case Start():
-                    self.current_state.action()
+                    self.current_state.action(game_continue)
                     self.current_state = self.path[1]
                 case OptionPicker():
                     action_start = self.current_state.get_option().action(self.next)
@@ -149,34 +142,3 @@ class Story:
                     break
 
 
-def reverse(function, state_enum):
-    return state_enum.FORWARD
-
-
-def forward(function, state_enum):
-    print("Option 2")
-    return state_enum.CHECKPOINT
-
-story_checker = Story(
-    [
-        Start("Start", "This is the start of the game", 123),
-        OptionPicker(
-            [
-                Option(
-                    reverse(),
-                    "Try to sneak around surrounding officers on the block to walk to the train.",
-                ),
-                Option(option_two, "Create a diversion outside."),
-            ],
-            """It is 6:32 AM. Walking to a train station will take 2 hours on foot and the last train to the US before hell breaks loose is 9:00AM. People are scrambling to escape, but rush hour is at 7:30AM. You can make time. What do you do?""",
-        ),
-        Checkpoint("Checkpoint 1", "This is a checkpoint", lambda: print("minigame")),
-        OptionPicker(
-            [Option(option_one, "Option 1"), Option(option_two, "Option 2")],
-            "What do you want to do?",
-        ),
-        End("End", "This is the end of the game"),
-    ]
-)
-
-story_checker.game_state()
