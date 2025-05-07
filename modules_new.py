@@ -1,12 +1,5 @@
 import random
 from enum import Enum
-from rich.panel import Panel
-from rich.console import Console, Group
-from rich import print as Print
-from rich.prompt import Prompt
-from rich.text import Text
-from rich.align import Align
-from rich.live import Live
 import time
 class Option:
 
@@ -84,8 +77,8 @@ class Checkpoint:
 
 class Start:
     # create a start that can be used to start the game(checkpoint without game), and set the seed of the game
-    def __init__(self, name, description, seed):
-        self.name = name
+    def __init__(self, user_name, description, seed):
+        self.user_name = user_name
         self.description = description
         self.seed = seed
 
@@ -120,25 +113,25 @@ class Story:
         self.next = game_continue 
 
     def game_state(self):
-        while True:
-            match self.current_state:
-                case Start():
-                    self.current_state.action(game_continue)
-                    self.current_state = self.path[1]
-                case OptionPicker():
-                    action_start = self.current_state.get_option().action(self.next)
-                    match action_start:
-                        case game_continue.FORWARD:
-                            self.current_state = self.path[
-                                self.path.index(self.current_state) + 1
-                            ]
-                        case game_continue.CHECKPOINT:
-                            self.current_state = self.current_checkpoint
-                case Checkpoint():
-                    self.current_checkpoint = self.current_state
-                    self.current_state = self.current_state.action(
-                        self.path[self.path.index(self.current_state) + 1],
-                        self.current_checkpoint,
-                    )
-                case End():
-                    self.current_state.action()
+        match self.current_state:
+            case Start():
+                self.current_state.action(game_continue)
+                self.current_state = self.path[1]
+            case OptionPicker():
+                action_start = self.current_state.get_option().action(self.next)
+                match action_start:
+                    case game_continue.FORWARD:
+                        self.current_state = self.path[
+                            self.path.index(self.current_state) + 1
+                        ]
+                    case game_continue.CHECKPOINT:
+                        self.current_state = self.current_checkpoint
+            case Checkpoint():
+                self.current_checkpoint = self.current_state
+                self.current_state = self.current_state.action(
+                    self.path[self.path.index(self.current_state) + 1],
+                    self.current_checkpoint,
+                )
+            case End():
+                self.current_state.action()
+                return 'End'
