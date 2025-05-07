@@ -35,6 +35,9 @@ class Input:
             else:
                 return self.value
 
+class Output:
+    pass
+
 class OptionPicker(Input):
     def __init__(self, options, question, prompt="Here are your options: "):
         self.options = dict(enumerate(options, 1))
@@ -96,7 +99,6 @@ class End:
         # print a message to the user
         print("Thank you for playing the game!")
         # end the game
-
 
 class game_continue(Enum):
     FORWARD = 1
