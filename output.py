@@ -22,18 +22,17 @@ def make_layout() -> Layout:
     layout = Layout(name="root")
 
     layout.split(
-        Layout(name="header", size=3),
         Layout(name="main", ratio=1),
         Layout(name="footer", size=7),
     )
     layout["main"].split_row(
-        Layout(name="body", ratio=2, minimum_size=60),
+        Layout(name="body", ratio=4, minimum_size=60),
         Layout(name="side")
     )
     return layout
 
 
-def make_sponsor_message() -> Panel:
+def make_python_project() -> Panel:
     """Some example content."""
     sponsor_message = Table.grid(padding=1)
     sponsor_message.add_column(style="green", justify="right")
@@ -62,7 +61,7 @@ def make_sponsor_message() -> Panel:
         ),
         box=box.ROUNDED,
         padding=(1, 2),
-        title="[b red]Thanks for trying out Rich!",
+        title="[b white]Game time!",
         border_style="bright_blue",
     )
     return message_panel
@@ -109,8 +108,7 @@ progress_table.add_row(
 
 
 layout = make_layout()
-layout["header"].update(Header())
-layout["body"].update(make_sponsor_message())
+layout["body"].update(make_python_project())
 layout["side"].update(Panel(layout.tree, border_style="red"))
 layout["footer"].update(progress_table)
 
@@ -121,13 +119,6 @@ from rich.live import Live
 
 def run():
     with Live(layout, refresh_per_second=10, screen=True):
-        while not overall_progress.finished:
-            sleep(0.1)
-            for job in job_progress.tasks:
-                if not job.finished:
-                    job_progress.advance(job.id)
-
-            completed = sum(task.completed for task in job_progress.tasks)
-            overall_progress.update(overall_task, completed=completed)
+        while True: pass
 
 run()
