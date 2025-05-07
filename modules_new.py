@@ -42,6 +42,9 @@ class Input:
             else:
                 return self.value
 
+class Output:
+    pass
+
 class OptionPicker(Input):
     def __init__(self, options, question, prompt="Here are your options: "):
         self.options = dict(enumerate(options, 1))
@@ -139,6 +142,3 @@ class Story:
                     )
                 case End():
                     self.current_state.action()
-                    break
-
-
