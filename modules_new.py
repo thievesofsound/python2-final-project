@@ -100,7 +100,6 @@ class End:
         print("Thank you for playing the game!")
         # end the game
 
-
 class game_continue(Enum):
     FORWARD = 1
     CHECKPOINT = 2
