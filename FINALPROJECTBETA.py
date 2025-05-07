@@ -138,8 +138,8 @@ def puzzle_minigame():
         else:
             slow_print("Invalid input. Enter 3 digits.")
 
-    slow_print("\nAlarm triggered! You have been captured.\n--- Game Over ---")
-    ask_retry()
+    slow_print("\nAlarm triggered! You have been captured.\n--- Game Over ---\n")
+    return True
 
 #epic pokemon battle
 def battle_minigame():
