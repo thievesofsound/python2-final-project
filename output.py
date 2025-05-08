@@ -1,2 +1,124 @@
-def slow_print(text):
-    print(''.join())
+"""
+Demonstrates a Rich "application" using the Layout and Live classes.
+
+"""
+
+from datetime import datetime
+
+from rich import box
+from rich.align import Align
+from rich.console import Console, Group
+from rich.layout import Layout
+from rich.panel import Panel
+from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
+from rich.syntax import Syntax
+from rich.table import Table
+
+console = Console()
+
+
+def make_layout() -> Layout:
+    """Define the layout."""
+    layout = Layout(name="root")
+
+    layout.split(
+        Layout(name="main", ratio=1),
+        Layout(name="footer", size=7),
+    )
+    layout["main"].split_row(
+        Layout(name="body", ratio=4, minimum_size=60),
+        Layout(name="side")
+    )
+    return layout
+
+
+def make_python_project() -> Panel:
+    """Some example content."""
+    sponsor_message = Table.grid(padding=1)
+    sponsor_message.add_column(style="green", justify="right")
+    sponsor_message.add_column(no_wrap=True)
+    sponsor_message.add_row(
+        "Twitter",
+        "[u blue link=https://twitter.com/textualize]https://twitter.com/textualize",
+    )
+    sponsor_message.add_row(
+        "CEO",
+        "[u blue link=https://twitter.com/willmcgugan]https://twitter.com/willmcgugan",
+    )
+    sponsor_message.add_row(
+        "Textualize", "[u blue link=https://www.textualize.io]https://www.textualize.io"
+    )
+
+    message = Table.grid(padding=1)
+    message.add_column()
+    message.add_column(no_wrap=True)
+    message.add_row(sponsor_message)
+
+    message_panel = Panel(
+        Align.center(
+            Group("\n", Align.center(sponsor_message)),
+            vertical="middle",
+        ),
+        box=box.ROUNDED,
+        padding=(1, 2),
+        title="[b white]Game time!",
+        border_style="bright_blue",
+    )
+    return message_panel
+
+
+class Header:
+    """Display header with clock."""
+
+    def __rich__(self) -> Panel:
+        grid = Table.grid(expand=True)
+        grid.add_column(justify="center", ratio=1)
+        grid.add_column(justify="right")
+        grid.add_row(
+            "[b]Rich[/b] Layout application",
+            datetime.now().ctime().replace(":", "[blink]:[/]"),
+        )
+        return Panel(grid, style="white on blue")
+
+
+job_progress = Progress(
+    "{task.description}",
+    SpinnerColumn(),
+    BarColumn(),
+    TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+)
+job_progress.add_task("[green]Cooking")
+job_progress.add_task("[magenta]Baking", total=200)
+job_progress.add_task("[cyan]Mixing", total=400)
+
+total = sum(task.total for task in job_progress.tasks)
+overall_progress = Progress()
+overall_task = overall_progress.add_task("All Jobs", total=int(total))
+
+progress_table = Table.grid(expand=True)
+progress_table.add_row(
+    Panel(
+        overall_progress,
+        title="Overall Progress",
+        border_style="green",
+        padding=(2, 2),
+    ),
+    Panel(job_progress, title="[b]Jobs", border_style="red", padding=(1, 2)),
+)
+
+
+layout = make_layout()
+layout["body"].update(make_python_project())
+layout["side"].update(Panel(layout.tree, border_style="red"))
+layout["footer"].update(progress_table)
+
+
+from time import sleep
+
+from rich.live import Live
+
+def run():
+    with Live(layout, refresh_per_second=10, screen=True):
+        while True: pass
+
+run()
