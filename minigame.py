@@ -120,7 +120,7 @@ def storm_navigation():
     health = 100
     directions = ['north', 'south', 'east', 'west']
 
-    for step in range(1, 4):
+    for step in range(1, 6):
         correct_path = random.choice(directions)
         print(f"\nStep {step}: Choose a direction (north, south, east, west)")
         choice = input("Your choice: ").lower()
@@ -133,7 +133,7 @@ def storm_navigation():
             print(f"-25 Health | Current Health: {health}")
         else:
             print("Invalid direction! You hesitate and the storm punishes you!")
-            health -= 25
+            health -= 50
             print(f"-25 Health | Current Health: {health}")
 
         if health <= 0:
@@ -248,4 +248,3 @@ def p_dice():
             print("** BULLET DICE CLEARED **")
             break
 
-p_dice()
