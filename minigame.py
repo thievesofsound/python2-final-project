@@ -120,7 +120,7 @@ def storm_navigation():
     health = 100
     directions = ['north', 'south', 'east', 'west']
 
-    for step in range(1, 4):
+    for step in range(1, 6):
         correct_path = random.choice(directions)
         print(f"\nStep {step}: Choose a direction (north, south, east, west)")
         choice = input("Your choice: ").lower()
@@ -133,7 +133,7 @@ def storm_navigation():
             print(f"-25 Health | Current Health: {health}")
         else:
             print("Invalid direction! You hesitate and the storm punishes you!")
-            health -= 25
+            health -= 50
             print(f"-25 Health | Current Health: {health}")
 
         if health <= 0:
@@ -179,5 +179,72 @@ def obstacle_navigation():
         elif injured and safe_count >= 2:
             print("\nDespite injury, you've managed to get through!")
             print("*OBSTACLE CLEARED*")
+            break
+
+### Puzzle | Played if User picks rob option | Step 3 - Story III
+import random
+
+def puzzle_minigame1():
+    print("\n--- Step II: Bomb Disable ---")
+    print("On your stolen item, there is a ticking time bomb")
+    print("To prevent your death, you must enter the correct 3-digit code.")
+    print("You only get 3 tries before the bomb explodes!")
+
+    # Generate random 3-digit code as a string
+    code = random.randint(100, 110)
+    attempts = 3
+
+    while attempts > 0:
+        guess = int(input(f"\nEnter 3-digit code ({attempts} attempt(s) left): "))
+
+        if guess == code:
+            print("Code accepted. Wealth unlocked!")
+            print("** SUCCESS **")
+            return
+        else:
+            print("Incorrect code.")
+            attempts -= 1
+
+    print("\nALARM SOUNDING! The Russians are coming!")
+    print("** GAME OVER **")
+
+###Puzzle | Played at Step 3 - StoryIII
+import random
+
+def p_dice():
+    print("\n--- Step III: Police Dodge---")
+    print("After blowing up the drone outpost, guards take aim at you")
+    print("You must dodge their shots, unaware of where they come from.")
+    print("1-2 = Headshot (FAIL)")
+    print("3-4 = Stomach Shot (INJURED but safe)")
+    print("5-6 = Missed")
+
+    safe_steps = 0
+    injured = False
+
+    while True:
+        input("Type 'Enter' to roll a dice and make your move")
+        roll = random.randint(1, 6)
+        print(f"You moved {roll} steps.")
+
+        if roll in [1, 2]:
+            print("HEADSHOT! You died")
+            print("** GAME OVER **")
+            break
+        elif roll in [3, 4]:
+            injured = True
+            print("The stomach shot does a number on you, but you persevere.")
+        elif roll in [5, 6]:
+            safe_steps += 1
+            print(f"Safe step! ({safe_steps} safe step(s))")
+
+        # moves on if user meets conditions
+        if safe_steps >= 1:
+            print("\nYou safely escape the bullet fire!")
+            print("** BULLET DICE CLEARED **")
+            break
+        elif injured and safe_steps >= 2:
+            print("\nDespite the injury, you've made it!")
+            print("** BULLET DICE CLEARED **")
             break
 
