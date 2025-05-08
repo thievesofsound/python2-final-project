@@ -109,7 +109,7 @@ class Story:
         self.path = path
         self.current_state = self.path[0]
         self.current_checkpoint = self.path[0]
-        self.next = game_continue 
+        self.next = game_continue
 
     def game_state(self):
         match self.current_state:
@@ -133,4 +133,3 @@ class Story:
                 )
             case End():
                 self.current_state.action()
-                return 'End'

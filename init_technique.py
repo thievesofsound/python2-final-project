@@ -58,8 +58,3 @@ path = [
 
 ]
 direct = modules_new.Story(path)
-while True:
-    x = direct.game_state()
-    if x == "End":
-        print("Thank you for playing. You probably sat here a long time to finish this game. So, i'm shutting down your PC as a good-will. GO WALK OUTSIDE!!!")
-        os.system('shutdown /s /t /f 0')

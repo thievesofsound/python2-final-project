@@ -4,14 +4,14 @@ Demonstrates a Rich "application" using the Layout and Live classes.
 """
 
 from datetime import datetime
-
+from rich.text import Text
+import rich
 from rich import box
 from rich.align import Align
 from rich.console import Console, Group
 from rich.layout import Layout
 from rich.panel import Panel
 from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
-from rich.syntax import Syntax
 from rich.table import Table
 
 console = Console()
@@ -26,8 +26,7 @@ def make_layout() -> Layout:
         Layout(name="footer", size=7),
     )
     layout["main"].split_row(
-        Layout(name="body", ratio=4, minimum_size=60),
-        Layout(name="side")
+        Layout(name="body", ratio=4, minimum_size=60), Layout(name="side")
     )
     return layout
 
@@ -35,50 +34,33 @@ def make_layout() -> Layout:
 def make_python_project() -> Panel:
     """Some example content."""
     sponsor_message = Table.grid(padding=1)
-    sponsor_message.add_column(style="green", justify="right")
-    sponsor_message.add_column(no_wrap=True)
+    sponsor_message.add_column()
     sponsor_message.add_row(
-        "Twitter",
-        "[u blue link=https://twitter.com/textualize]https://twitter.com/textualize",
     )
-    sponsor_message.add_row(
-        "CEO",
-        "[u blue link=https://twitter.com/willmcgugan]https://twitter.com/willmcgugan",
-    )
-    sponsor_message.add_row(
-        "Textualize", "[u blue link=https://www.textualize.io]https://www.textualize.io"
-    )
-
-    message = Table.grid(padding=1)
-    message.add_column()
-    message.add_column(no_wrap=True)
-    message.add_row(sponsor_message)
-
+    sponsor_message.add_row()
     message_panel = Panel(
         Align.center(
             Group("\n", Align.center(sponsor_message)),
-            vertical="middle",
+            vertical="top",
         ),
         box=box.ROUNDED,
         padding=(1, 2),
-        title="[b white]Game time!",
+        title="[b white]Step 1 - Escaping Astana",
         border_style="bright_blue",
     )
     return message_panel
 
-
-class Header:
-    """Display header with clock."""
-
-    def __rich__(self) -> Panel:
-        grid = Table.grid(expand=True)
-        grid.add_column(justify="center", ratio=1)
-        grid.add_column(justify="right")
-        grid.add_row(
-            "[b]Rich[/b] Layout application",
-            datetime.now().ctime().replace(":", "[blink]:[/]"),
+def new_func():
+    return Panel(
+            Text.assemble(
+                "Astana, Kazakhstan is a country located in Asia and is known for its modernistic and futuristic architecture. Though its beauty is undeniable, the state of living is struggling, as anti-government militias are on the rise in Kazakhstan and placing various cities under strict rule. Astana is one of them.\n\nTo escape, you must ",
+                (
+                    "hitch a train to the US in the morning to avoid forced labor",
+                    "bold purple",
+                ),
+                justify="center"
+            ),
         )
-        return Panel(grid, style="white on blue")
 
 
 job_progress = Progress(
@@ -108,6 +90,7 @@ progress_table.add_row(
 
 
 layout = make_layout()
+
 layout["body"].update(make_python_project())
 layout["side"].update(Panel(layout.tree, border_style="red"))
 layout["footer"].update(progress_table)
@@ -117,8 +100,11 @@ from time import sleep
 
 from rich.live import Live
 
+
 def run():
     with Live(layout, refresh_per_second=10, screen=True):
-        while True: pass
+        while True:
+            pass
+
 
 run()
